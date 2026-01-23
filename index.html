@@ -166,34 +166,6 @@
             color: var(--gold-accent);
         }
 
-        /* Button */
-        .btn-container {
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        button {
-            width: 100%;
-            max-width: 300px;
-            padding: 14px;
-            background-color: var(--gold-accent);
-            color: #1a1a1a;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-        }
-
-        button:hover {
-            background-color: var(--gold-hover);
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
         /* Error Message */
         .error-msg {
             color: var(--error-color);
@@ -264,7 +236,7 @@
         <div class="market-price-section">
             <div class="input-group">
                 <label for="marketPrice">Current Market Price / g (RM)</label>
-                <input type="number" id="marketPrice" placeholder="e.g. 300.00" step="0.01">
+                <input type="number" id="marketPrice" placeholder="e.g. 300.00" step="0.01" oninput="calculateAll()">
             </div>
         </div>
 
@@ -284,41 +256,37 @@
                     <!-- Row 1 -->
                     <tr class="data-row">
                         <td style="text-align: center; color: #666;">1</td>
-                        <td><input type="number" class="table-input buy-input" placeholder="0.00"></td>
-                        <td><input type="number" class="table-input weight-input" placeholder="0.00"></td>
+                        <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                        <td><input type="number" class="table-input weight-input" placeholder="0.00" oninput="calculateAll()"></td>
                         <td class="result-cell cost-output">-</td>
                         <td class="result-cell spread-output">-</td>
                     </tr>
                     <!-- Row 2 -->
                     <tr class="data-row">
                         <td style="text-align: center; color: #666;">2</td>
-                        <td><input type="number" class="table-input buy-input" placeholder="0.00"></td>
-                        <td><input type="number" class="table-input weight-input" placeholder="0.00"></td>
+                        <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                        <td><input type="number" class="table-input weight-input" placeholder="0.00" oninput="calculateAll()"></td>
                         <td class="result-cell cost-output">-</td>
                         <td class="result-cell spread-output">-</td>
                     </tr>
                     <!-- Row 3 -->
                     <tr class="data-row">
                         <td style="text-align: center; color: #666;">3</td>
-                        <td><input type="number" class="table-input buy-input" placeholder="0.00"></td>
-                        <td><input type="number" class="table-input weight-input" placeholder="0.00"></td>
+                        <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                        <td><input type="number" class="table-input weight-input" placeholder="0.00" oninput="calculateAll()"></td>
                         <td class="result-cell cost-output">-</td>
                         <td class="result-cell spread-output">-</td>
                     </tr>
                     <!-- Row 4 -->
                     <tr class="data-row">
                         <td style="text-align: center; color: #666;">4</td>
-                        <td><input type="number" class="table-input buy-input" placeholder="0.00"></td>
-                        <td><input type="number" class="table-input weight-input" placeholder="0.00"></td>
+                        <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                        <td><input type="number" class="table-input weight-input" placeholder="0.00" oninput="calculateAll()"></td>
                         <td class="result-cell cost-output">-</td>
                         <td class="result-cell spread-output">-</td>
                     </tr>
                 </tbody>
             </table>
-        </div>
-
-        <div class="btn-container">
-            <button onclick="calculateAll()">Calculate All</button>
         </div>
         
         <div id="errorArea" class="error-msg"></div>
@@ -335,15 +303,8 @@
             // Reset Error
             errorArea.style.display = 'none';
 
-            // Validate Market Price
-            if (isNaN(marketPrice) || marketPrice <= 0) {
-                showError("Please enter a valid Current Market Price at the top.");
-                return;
-            }
-
             // 2. Loop through all rows
             const rows = document.querySelectorAll('.data-row');
-            let hasData = false;
 
             rows.forEach(row => {
                 const buyInput = row.querySelector('.buy-input');
@@ -354,11 +315,12 @@
                 const buyVal = parseFloat(buyInput.value);
                 const weightVal = parseFloat(weightInput.value);
 
-                // Only calculate if both inputs in the row are filled
-                if (!isNaN(buyVal) && !isNaN(weightVal) && weightVal > 0) {
-                    hasData = true;
+                // Check validity
+                const validMarket = !isNaN(marketPrice) && marketPrice > 0;
+                const validRow = !isNaN(buyVal) && !isNaN(weightVal) && weightVal > 0;
 
-                    // Calculation
+                // Calculation
+                if (validMarket && validRow) {
                     const costPerGram = buyVal / weightVal;
                     const spreadPerGram = costPerGram - marketPrice;
 
@@ -368,9 +330,7 @@
                     const sign = spreadPerGram > 0 ? "+" : "";
                     spreadOutput.innerText = sign + spreadPerGram.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-                    // Styling for Spread (Red if high, Green/Gold if low/negative)
-                    // For spread, usually lower is better for buyer, but standard representation:
-                    // Positive spread = Premium over spot (Cost > Market)
+                    // Styling for Spread
                     spreadOutput.style.color = spreadPerGram >= 0 ? '#d4af37' : '#4caf50'; 
                 } else {
                     // Clear outputs if inputs are invalid/empty
@@ -379,9 +339,11 @@
                     spreadOutput.style.color = "inherit";
                 }
             });
-
-            if (!hasData) {
-                showError("Please enter Buy Amount and Gold Weight for at least one row.");
+            
+            // Helpful hint if they type in rows but forget market price
+            const anyRowHasData = Array.from(rows).some(r => r.querySelector('.buy-input').value && r.querySelector('.weight-input').value);
+            if (anyRowHasData && (isNaN(marketPrice) || marketPrice <= 0)) {
+                showError("Please enter the Current Market Price at the top.");
             }
         }
 
