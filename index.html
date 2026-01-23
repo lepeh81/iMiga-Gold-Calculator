@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iMiga Gold Calculator by Lepeh</title>
+    
+    <style>
+        /* CSS STYLING */
+        :root {
+            --bg-color: #1a1a1a;
+            --card-bg: #2c2c2c;
+            --gold-accent: #d4af37;
+            --gold-hover: #b5952f;
+            --text-white: #ffffff;
+            --text-gray: #cccccc;
+            --input-bg: #3d3d3d;
+            --input-border: #555;
+            --error-color: #ff6b6b;
+            --positive-green: #4caf50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .calculator-card {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 900px; /* Wider for table */
+            border-top: 5px solid var(--gold-accent);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--gold-accent);
+            margin-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            margin-bottom: 2rem;
+            border: 1px solid #444;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 350px; /* Fixed height for chart */
+        }
+
+        /* Top Section for Market Price */
+        .market-price-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            background-color: #252525;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .input-group {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--gold-accent);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            text-align: center;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--gold-accent);
+        }
+
+        /* Table Styling */
+        .table-container {
+            overflow-x: auto; /* Scroll on mobile */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px; /* Space between rows */
+            min-width: 600px; /* Ensure table doesn't squish too much */
+        }
+
+        th {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            padding: 10px;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #444;
+        }
+
+        td {
+            padding: 0 10px;
+            vertical-align: middle;
+        }
+
+        .data-row {
+            background-color: #333;
+            transition: transform 0.2s;
+        }
+        
+        .data-row:hover {
+            background-color: #383838;
+        }
+
+        .data-row td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+        .data-row td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+        .table-input {
+            background-color: #222;
+            border: 1px solid #444;
+            padding: 10px;
+            font-size: 0.95rem;
+        }
+
+        .result-cell {
+            text-align: center;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+        }
+
+        .spread-cell {
+            color: var(--gold-accent);
+        }
+
+        /* Button */
+        .btn-container {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+            max-width: 300px;
+            padding: 14px;
+            background-color: var(--gold-accent);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--gold-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Error Message */
+        .error-msg {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* Remove arrows from number inputs */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-card">
+        <h1>iMiga Gold Calculator by Lepeh</h1>
+        <p class="subtitle">Compare purchase options against the market price.</p>
+
+        <!-- Chart Container -->
+        <div class="chart-container">
+            <!-- TradingView Widget BEGIN -->
+            <div class="tradingview-widget-container">
+                <div id="tradingview_chart"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                <script type="text/javascript">
+                new TradingView.widget(
+                {
+                "autosize": true,
+                "symbol": "FX_IDC:XAUMYR",
+                "interval": "60",
+                "timezone": "Asia/Kuala_Lumpur",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "enable_publishing": false,
+                "hide_top_toolbar": false,
+                "hide_legend": false,
+                "save_image": false,
+                "container_id": "tradingview_chart",
+                "backgroundColor": "rgba(44, 44, 44, 1)"
+                }
+                );
+                </script>
+            </div>
+            <!-- TradingView Widget END -->
+        </div>
+
+        <!-- Live Price Ticker -->
+        <div class="input-group" style="width: 100%; max-width: 100%; margin-bottom: 2rem; box-sizing: border-box;">
+            <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                {
+                "symbol": "FX_IDC:XAUMYR",
+                "width": "100%",
+                "colorTheme": "dark",
+                "isTransparent": true,
+                "locale": "en"
+                }
+                </script>
+            </div>
+        </div>
+
+        <!-- Global Market Price -->
+        <div class="market-price-section">
+            <div class="input-group">
+                <label for="marketPrice">Current Market Price / g (RM)</label>
+                <input type="number" id="marketPrice" placeholder="e.g. 300.00" step="0.01">
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">#</th>
+                        <th>Buy (RM)</th>
+                        <th>Gold (Gram)</th>
+                        <th>Gold/Gram (RM)</th>
+                        <th>Spread/Gram (RM)</th>
+                    </tr>
+                </thead>
+                <tbody id="comparisonBody">
+                    <!-- Row 1 -->
+                    <tr class="data-row">
+                        <td style="text-align: center; color: #666;">1</td>
+                        <td><input type="number" class="table-input buy-input" placeholder="0.00"></td>
+                        <td><input type="number" class="table-input weight-input" placeholder="0.00"></td>
+                        <td class="result-cell cost-output">-</td>
+                        <td class="result-cell spread-output">-</td>
+                    </tr>
+                    <!-- Row 2 -->
+                    <tr class="data-row">
+                        <td style="text-align: center; color: #666;">2</td>
+                        <td><input type="number" class="table-input buy-input" placeholder="0.00"></td>
+                        <td><input type="number" class="table-input weight-input" placeholder="0.00"></td>
+                        <td class="result-cell cost-output">-</td>
+                        <td class="result-cell spread-output">-</td>
+                    </tr>
+                    <!-- Row 3 -->
+                    <tr class="data-row">
+                        <td style="text-align: center; color: #666;">3</td>
+                        <td><input type="number" class="table-input buy-input" placeholder="0.00"></td>
+                        <td><input type="number" class="table-input weight-input" placeholder="0.00"></td>
+                        <td class="result-cell cost-output">-</td>
+                        <td class="result-cell spread-output">-</td>
+                    </tr>
+                    <!-- Row 4 -->
+                    <tr class="data-row">
+                        <td style="text-align: center; color: #666;">4</td>
+                        <td><input type="number" class="table-input buy-input" placeholder="0.00"></td>
+                        <td><input type="number" class="table-input weight-input" placeholder="0.00"></td>
+                        <td class="result-cell cost-output">-</td>
+                        <td class="result-cell spread-output">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-container">
+            <button onclick="calculateAll()">Calculate All</button>
+        </div>
+        
+        <div id="errorArea" class="error-msg"></div>
+
+    </div>
+
+    <script>
+        function calculateAll() {
+            // 1. Get Global Market Price
+            const marketPriceInput = document.getElementById('marketPrice');
+            const marketPrice = parseFloat(marketPriceInput.value);
+            const errorArea = document.getElementById('errorArea');
+
+            // Reset Error
+            errorArea.style.display = 'none';
+
+            // Validate Market Price
+            if (isNaN(marketPrice) || marketPrice <= 0) {
+                showError("Please enter a valid Current Market Price at the top.");
+                return;
+            }
+
+            // 2. Loop through all rows
+            const rows = document.querySelectorAll('.data-row');
+            let hasData = false;
+
+            rows.forEach(row => {
+                const buyInput = row.querySelector('.buy-input');
+                const weightInput = row.querySelector('.weight-input');
+                const costOutput = row.querySelector('.cost-output');
+                const spreadOutput = row.querySelector('.spread-output');
+
+                const buyVal = parseFloat(buyInput.value);
+                const weightVal = parseFloat(weightInput.value);
+
+                // Only calculate if both inputs in the row are filled
+                if (!isNaN(buyVal) && !isNaN(weightVal) && weightVal > 0) {
+                    hasData = true;
+
+                    // Calculation
+                    const costPerGram = buyVal / weightVal;
+                    const spreadPerGram = costPerGram - marketPrice;
+
+                    // Update UI
+                    costOutput.innerText = costPerGram.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    
+                    const sign = spreadPerGram > 0 ? "+" : "";
+                    spreadOutput.innerText = sign + spreadPerGram.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+                    // Styling for Spread (Red if high, Green/Gold if low/negative)
+                    // For spread, usually lower is better for buyer, but standard representation:
+                    // Positive spread = Premium over spot (Cost > Market)
+                    spreadOutput.style.color = spreadPerGram >= 0 ? '#d4af37' : '#4caf50'; 
+                } else {
+                    // Clear outputs if inputs are invalid/empty
+                    costOutput.innerText = "-";
+                    spreadOutput.innerText = "-";
+                    spreadOutput.style.color = "inherit";
+                }
+            });
+
+            if (!hasData) {
+                showError("Please enter Buy Amount and Gold Weight for at least one row.");
+            }
+        }
+
+        function showError(msg) {
+            const errorArea = document.getElementById('errorArea');
+            errorArea.innerText = msg;
+            errorArea.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
