@@ -19,6 +19,8 @@
             --error-color: #ff6b6b;
             --positive-green: #4caf50;
             --tab-inactive: #3d3d3d;
+            --highlight-bg: #2e3b2f;
+            --highlight-border: #4caf50;
         }
 
         body {
@@ -186,10 +188,16 @@
         .data-row {
             background-color: #333;
             transition: transform 0.2s;
+            border-radius: 8px;
         }
         
         .data-row:hover {
             background-color: #383838;
+        }
+
+        .data-row.best-deal {
+            background-color: #2e3b2f; /* Greenish tint for best deal */
+            border: 1px solid #4caf50;
         }
 
         .data-row td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
@@ -211,6 +219,34 @@
 
         .spread-cell {
             color: var(--gold-accent);
+        }
+
+        /* Suggestion Box */
+        .suggestion-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: var(--highlight-bg);
+            border: 2px solid var(--highlight-border);
+            border-radius: 10px;
+            text-align: center;
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease;
+        }
+
+        .suggestion-text {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        
+        .suggestion-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Error Message */
@@ -279,11 +315,10 @@
             </div>
         </div>
 
-        <!-- NEW: Technical Rating Meter (XAU/USD) -->
+        <!-- Technical Rating Meter (XAU/USD) -->
         <div class="prediction-section">
             <h2 style="text-align:center; color:white; font-size:1.2rem; margin-bottom:0.5rem;">Technical Rating (XAU/USD)</h2>
             
-            <!-- Technical Analysis Widget with Tabs -->
             <div class="tradingview-widget-container" style="height: 450px;">
                 <div class="tradingview-widget-container__widget"></div>
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
@@ -301,7 +336,6 @@
                 </script>
             </div>
 
-            <!-- Analyst Comment -->
             <div class="insight-box">
                 <h3>🔮 Technical Insight</h3>
                 <p>This widget analyzes oscillators and moving averages for XAU/USD (OANDA).</p>
@@ -310,7 +344,6 @@
                     <li><strong style="color: #4caf50;">Strong Buy</strong> suggests strong bullish momentum.</li>
                     <li><strong style="color: #ff6b6b;">Strong Sell</strong> suggests strong bearish momentum.</li>
                 </ul>
-                <p class="disclaimer"><em>Note: Using XAU/USD technicals as a proxy for global gold sentiment.</em></p>
             </div>
         </div>
 
@@ -336,39 +369,53 @@
                 </thead>
                 <tbody id="comparisonBody">
                     <!-- Row 1 -->
-                    <tr class="data-row">
+                    <tr class="data-row" id="row-0">
                         <td style="text-align: center; color: #666;">1</td>
                         <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                        <td><input type="number" class="table-input weight-input" placeholder="0.00" oninput="calculateAll()"></td>
+                        <td><input type="number" class="table-input weight-input" value="0.014" step="0.001" oninput="calculateAll()"></td>
                         <td class="result-cell cost-output">-</td>
                         <td class="result-cell spread-output">-</td>
                     </tr>
                     <!-- Row 2 -->
-                    <tr class="data-row">
+                    <tr class="data-row" id="row-1">
                         <td style="text-align: center; color: #666;">2</td>
                         <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                        <td><input type="number" class="table-input weight-input" placeholder="0.00" oninput="calculateAll()"></td>
+                        <td><input type="number" class="table-input weight-input" value="0.015" step="0.001" oninput="calculateAll()"></td>
                         <td class="result-cell cost-output">-</td>
                         <td class="result-cell spread-output">-</td>
                     </tr>
                     <!-- Row 3 -->
-                    <tr class="data-row">
+                    <tr class="data-row" id="row-2">
                         <td style="text-align: center; color: #666;">3</td>
                         <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                        <td><input type="number" class="table-input weight-input" placeholder="0.00" oninput="calculateAll()"></td>
+                        <td><input type="number" class="table-input weight-input" value="0.016" step="0.001" oninput="calculateAll()"></td>
                         <td class="result-cell cost-output">-</td>
                         <td class="result-cell spread-output">-</td>
                     </tr>
                     <!-- Row 4 -->
-                    <tr class="data-row">
+                    <tr class="data-row" id="row-3">
                         <td style="text-align: center; color: #666;">4</td>
                         <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                        <td><input type="number" class="table-input weight-input" placeholder="0.00" oninput="calculateAll()"></td>
+                        <td><input type="number" class="table-input weight-input" value="0.017" step="0.001" oninput="calculateAll()"></td>
+                        <td class="result-cell cost-output">-</td>
+                        <td class="result-cell spread-output">-</td>
+                    </tr>
+                    <!-- Row 5 -->
+                    <tr class="data-row" id="row-4">
+                        <td style="text-align: center; color: #666;">5</td>
+                        <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                        <td><input type="number" class="table-input weight-input" value="0.018" step="0.001" oninput="calculateAll()"></td>
                         <td class="result-cell cost-output">-</td>
                         <td class="result-cell spread-output">-</td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+        
+        <!-- Automatic Suggestion Box -->
+        <div id="suggestionArea" class="suggestion-box">
+            <span class="suggestion-icon">💡</span>
+            <span id="suggestionText" class="suggestion-text"></span>
         </div>
         
         <div id="errorArea" class="error-msg"></div>
@@ -382,14 +429,24 @@
             const marketPriceInput = document.getElementById('marketPrice');
             const marketPrice = parseFloat(marketPriceInput.value);
             const errorArea = document.getElementById('errorArea');
+            const suggestionArea = document.getElementById('suggestionArea');
+            const suggestionText = document.getElementById('suggestionText');
 
-            // Reset Error
+            // Reset Error & Suggestion
             errorArea.style.display = 'none';
+            suggestionArea.style.display = 'none';
 
             // 2. Loop through all rows
             const rows = document.querySelectorAll('.data-row');
+            
+            let minCostPerGram = Infinity;
+            let bestWeight = null;
+            let bestRowId = null;
 
             rows.forEach(row => {
+                // Reset styling
+                row.classList.remove('best-deal');
+
                 const buyInput = row.querySelector('.buy-input');
                 const weightInput = row.querySelector('.weight-input');
                 const costOutput = row.querySelector('.cost-output');
@@ -398,23 +455,35 @@
                 const buyVal = parseFloat(buyInput.value);
                 const weightVal = parseFloat(weightInput.value);
 
-                // Check validity
+                // Check inputs for calculation
                 const validMarket = !isNaN(marketPrice) && marketPrice > 0;
                 const validRow = !isNaN(buyVal) && !isNaN(weightVal) && weightVal > 0;
 
                 // Calculation
-                if (validMarket && validRow) {
+                if (validRow) {
                     const costPerGram = buyVal / weightVal;
-                    const spreadPerGram = costPerGram - marketPrice;
-
-                    // Update UI
+                    
+                    // Display Cost/Gram even if Market Price is missing
                     costOutput.innerText = costPerGram.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
                     
-                    const sign = spreadPerGram > 0 ? "+" : "";
-                    spreadOutput.innerText = sign + spreadPerGram.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    // Spread calculation requires Market Price
+                    if (validMarket) {
+                        const spreadPerGram = costPerGram - marketPrice;
+                        const sign = spreadPerGram > 0 ? "+" : "";
+                        spreadOutput.innerText = sign + spreadPerGram.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                        spreadOutput.style.color = spreadPerGram >= 0 ? '#d4af37' : '#4caf50'; 
+                    } else {
+                        spreadOutput.innerText = "-";
+                        spreadOutput.style.color = "inherit";
+                    }
 
-                    // Styling for Spread
-                    spreadOutput.style.color = spreadPerGram >= 0 ? '#d4af37' : '#4caf50'; 
+                    // Track Best Deal (Lowest Cost Per Gram)
+                    if (costPerGram < minCostPerGram) {
+                        minCostPerGram = costPerGram;
+                        bestWeight = weightVal;
+                        bestRowId = row.id;
+                    }
+
                 } else {
                     // Clear outputs if inputs are invalid/empty
                     costOutput.innerText = "-";
@@ -422,18 +491,24 @@
                     spreadOutput.style.color = "inherit";
                 }
             });
+
+            // 3. Display Suggestion if we found a valid calculation
+            if (bestWeight !== null) {
+                suggestionText.innerText = `Belian ${bestWeight}g adalah lebih menguntungkan`;
+                suggestionArea.style.display = 'block';
+                
+                // Optional: Highlight the row slightly
+                if(bestRowId) {
+                    document.getElementById(bestRowId).classList.add('best-deal');
+                }
+            }
             
             // Helpful hint if they type in rows but forget market price
-            const anyRowHasData = Array.from(rows).some(r => r.querySelector('.buy-input').value && r.querySelector('.weight-input').value);
+            const anyRowHasData = Array.from(rows).some(r => r.querySelector('.buy-input').value);
             if (anyRowHasData && (isNaN(marketPrice) || marketPrice <= 0)) {
-                showError("Please enter the Current Market Price (from the ticker) to calculate spread.");
+                // We don't block the suggestion because suggestion is based on lowest Cost/Gram which doesn't need Market Price
+                // But we can show a small warning or just let the spread be "-"
             }
-        }
-
-        function showError(msg) {
-            const errorArea = document.getElementById('errorArea');
-            errorArea.innerText = msg;
-            errorArea.style.display = 'block';
         }
     </script>
 </body>
