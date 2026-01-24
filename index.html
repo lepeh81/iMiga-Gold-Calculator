@@ -60,6 +60,53 @@
             margin-bottom: 2rem;
         }
 
+        /* --- MAIN TABS --- */
+        .main-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            border-bottom: 1px solid #444;
+            padding-bottom: 1rem;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        .main-tab-btn {
+            background-color: transparent;
+            color: var(--text-gray);
+            border: 2px solid #444;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+            max-width: 200px;
+        }
+
+        .main-tab-btn:hover {
+            border-color: var(--gold-accent);
+            color: var(--text-white);
+        }
+
+        .main-tab-btn.active {
+            background-color: var(--gold-accent);
+            color: #1a1a1a;
+            border-color: var(--gold-accent);
+        }
+
+        /* Tab Content Container */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         /* Chart Container */
         .chart-container {
             margin-bottom: 1rem;
@@ -237,6 +284,8 @@
             color: #ffffff;
             font-size: 1.1rem;
             font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
         }
         
         .suggestion-icon {
@@ -244,9 +293,45 @@
             margin-right: 10px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .save-btn {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* History Table Specifics */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 12px;
+            background-color: #333;
+            color: var(--gold-accent);
+        }
+
+        .history-table td {
+            padding: 12px;
+            border-bottom: 1px solid #444;
+            color: #ddd;
+        }
+
+        .history-date {
+            color: #888;
+            font-size: 0.85rem;
         }
 
         /* Error Message */
@@ -270,181 +355,231 @@
         <h1>iMiga Gold Calculator by Lepeh</h1>
         <p class="subtitle">Compare purchase options against the market price.</p>
 
-        <!-- Chart Container -->
-        <div class="chart-container">
-            <!-- TradingView Widget BEGIN -->
-            <div class="tradingview-widget-container">
-                <div id="tradingview_chart"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                <script type="text/javascript">
-                new TradingView.widget(
-                {
-                "autosize": true,
-                "symbol": "FX_IDC:XAUMYR/31.1035", 
-                "interval": "60",
-                "timezone": "Asia/Kuala_Lumpur",
-                "theme": "dark",
-                "style": "1",
-                "locale": "en",
-                "enable_publishing": false,
-                "hide_top_toolbar": false,
-                "hide_legend": false,
-                "save_image": false,
-                "container_id": "tradingview_chart",
-                "backgroundColor": "rgba(44, 44, 44, 1)"
-                }
-                );
-                </script>
-            </div>
-            <!-- TradingView Widget END -->
+        <!-- Main Tabs Navigation -->
+        <div class="main-tabs">
+            <button class="main-tab-btn active" onclick="switchMainTab('tab-calculator', this)">Gold Calculator</button>
+            <button class="main-tab-btn" onclick="switchMainTab('tab-analysis', this)">Market Analysis</button>
+            <button class="main-tab-btn" onclick="switchMainTab('tab-history', this)">Deal History</button>
         </div>
 
-        <!-- Live Price Ticker Container -->
-        <div class="ticker-container">
-            <div class="tradingview-widget-container">
-                <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-                {
-                "symbol": "FX_IDC:XAUMYR/31.1035",
-                "width": "100%",
-                "colorTheme": "dark",
-                "isTransparent": true,
-                "locale": "en"
-                }
-                </script>
+        <!-- TAB 1: MARKET ANALYSIS -->
+        <div id="tab-analysis" class="tab-content">
+            <!-- Chart Container -->
+            <div class="chart-container">
+                <!-- TradingView Widget BEGIN -->
+                <div class="tradingview-widget-container">
+                    <div id="tradingview_chart"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                    <script type="text/javascript">
+                    new TradingView.widget(
+                    {
+                    "autosize": true,
+                    "symbol": "FX_IDC:XAUMYR/31.1035", 
+                    "interval": "60",
+                    "timezone": "Asia/Kuala_Lumpur",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "en",
+                    "enable_publishing": false,
+                    "hide_top_toolbar": false,
+                    "hide_legend": false,
+                    "save_image": false,
+                    "container_id": "tradingview_chart",
+                    "backgroundColor": "rgba(44, 44, 44, 1)"
+                    }
+                    );
+                    </script>
+                </div>
+                <!-- TradingView Widget END -->
+            </div>
+
+            <!-- Live Price Ticker Container -->
+            <div class="ticker-container">
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                    {
+                    "symbol": "FX_IDC:XAUMYR/31.1035",
+                    "width": "100%",
+                    "colorTheme": "dark",
+                    "isTransparent": true,
+                    "locale": "en"
+                    }
+                    </script>
+                </div>
+            </div>
+
+            <!-- Technical Rating Meter (XAU/USD) -->
+            <div class="prediction-section">
+                <h2 style="text-align:center; color:white; font-size:1.2rem; margin-bottom:0.5rem;">Technical Rating (XAU/USD)</h2>
+                
+                <div class="tradingview-widget-container" style="height: 500px;">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                    {
+                    "interval": "1m",
+                    "width": "100%",
+                    "isTransparent": true,
+                    "height": "100%",
+                    "symbol": "OANDA:XAUUSD",
+                    "showIntervalTabs": true,
+                    "displayMode": "single",
+                    "locale": "en",
+                    "colorTheme": "dark"
+                    }
+                    </script>
+                </div>
+
+                <div class="insight-box">
+                    <h3>🔮 Technical Insight</h3>
+                    <p>This widget analyzes oscillators and moving averages for XAU/USD (OANDA).</p>
+                    <ul style="padding-left: 20px; margin-top: 5px;">
+                        <li>Use the <strong>tabs above</strong> (1m, 5m, 15m, 1h, etc.) to change the timeframe.</li>
+                        <li><strong style="color: #4caf50;">Strong Buy</strong> suggests strong bullish momentum.</li>
+                        <li><strong style="color: #ff6b6b;">Strong Sell</strong> suggests strong bearish momentum.</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <!-- Technical Rating Meter (XAU/USD) -->
-        <div class="prediction-section">
-            <h2 style="text-align:center; color:white; font-size:1.2rem; margin-bottom:0.5rem;">Technical Rating (XAU/USD)</h2>
+        <!-- TAB 2: GOLD CALCULATOR (Default Active) -->
+        <div id="tab-calculator" class="tab-content active">
+            <!-- Global Market Price Input -->
+            <div class="market-price-section">
+                <div class="input-group">
+                    <label for="marketPrice">Enter Market Price (RM / g)</label>
+                    <input type="number" id="marketPrice" placeholder="e.g. 385.50" step="0.01" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th>Buy (RM)</th>
+                            <th>Gold (Gram)</th>
+                            <th>Gold/Gram (RM)</th>
+                            <th>Spread/Gram (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonBody">
+                        <!-- Row 1 -->
+                        <tr class="data-row" id="row-0">
+                            <td style="text-align: center; color: #666;">1</td>
+                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                            <td><input type="number" class="table-input weight-input" value="0.014" step="0.001" oninput="calculateAll()"></td>
+                            <td class="result-cell cost-output">-</td>
+                            <td class="result-cell spread-output">-</td>
+                        </tr>
+                        <!-- Row 2 -->
+                        <tr class="data-row" id="row-1">
+                            <td style="text-align: center; color: #666;">2</td>
+                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                            <td><input type="number" class="table-input weight-input" value="0.015" step="0.001" oninput="calculateAll()"></td>
+                            <td class="result-cell cost-output">-</td>
+                            <td class="result-cell spread-output">-</td>
+                        </tr>
+                        <!-- Row 3 -->
+                        <tr class="data-row" id="row-2">
+                            <td style="text-align: center; color: #666;">3</td>
+                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                            <td><input type="number" class="table-input weight-input" value="0.016" step="0.001" oninput="calculateAll()"></td>
+                            <td class="result-cell cost-output">-</td>
+                            <td class="result-cell spread-output">-</td>
+                        </tr>
+                        <!-- Row 4 -->
+                        <tr class="data-row" id="row-3">
+                            <td style="text-align: center; color: #666;">4</td>
+                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                            <td><input type="number" class="table-input weight-input" value="0.017" step="0.001" oninput="calculateAll()"></td>
+                            <td class="result-cell cost-output">-</td>
+                            <td class="result-cell spread-output">-</td>
+                        </tr>
+                        <!-- Row 5 -->
+                        <tr class="data-row" id="row-4">
+                            <td style="text-align: center; color: #666;">5</td>
+                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                            <td><input type="number" class="table-input weight-input" value="0.018" step="0.001" oninput="calculateAll()"></td>
+                            <td class="result-cell cost-output">-</td>
+                            <td class="result-cell spread-output">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             
-            <div class="tradingview-widget-container" style="height: 450px;">
-                <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
-                {
-                "interval": "1m",
-                "width": "100%",
-                "isTransparent": true,
-                "height": "100%",
-                "symbol": "OANDA:XAUUSD",
-                "showIntervalTabs": true,
-                "displayMode": "single",
-                "locale": "en",
-                "colorTheme": "dark"
-                }
-                </script>
+            <!-- Automatic Suggestion Box -->
+            <div id="suggestionArea" class="suggestion-box">
+                <span class="suggestion-icon">💡</span>
+                <span id="suggestionText" class="suggestion-text"></span>
+                <button class="save-btn" onclick="saveBestDeal()">Save Record</button>
             </div>
-
-            <div class="insight-box">
-                <h3>🔮 Technical Insight</h3>
-                <p>This widget analyzes oscillators and moving averages for XAU/USD (OANDA).</p>
-                <ul style="padding-left: 20px; margin-top: 5px;">
-                    <li>Use the <strong>tabs above</strong> (1m, 5m, 15m, 1h, etc.) to change the timeframe.</li>
-                    <li><strong style="color: #4caf50;">Strong Buy</strong> suggests strong bullish momentum.</li>
-                    <li><strong style="color: #ff6b6b;">Strong Sell</strong> suggests strong bearish momentum.</li>
-                </ul>
-            </div>
+            
+            <div id="errorArea" class="error-msg"></div>
         </div>
 
-        <!-- Global Market Price Input -->
-        <div class="market-price-section">
-            <div class="input-group">
-                <label for="marketPrice">Enter Market Price (RM / g)</label>
-                <input type="number" id="marketPrice" placeholder="e.g. 385.50" step="0.01" oninput="calculateAll()">
+        <!-- TAB 3: DEAL HISTORY -->
+        <div id="tab-history" class="tab-content">
+            <h2 style="text-align:center; color: var(--gold-accent);">Best Suggestions (Last 3 Months)</h2>
+            <div class="table-container">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date / Time</th>
+                            <th>Weight</th>
+                            <th>Price/g</th>
+                            <th>Total Buy (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <!-- History items will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+            <div style="text-align:center; margin-top:1rem;">
+                <button onclick="clearHistory()" style="background:transparent; color:#888; border:1px solid #555; padding:5px 10px; cursor:pointer; border-radius:5px;">Clear History</button>
             </div>
         </div>
-
-        <!-- Comparison Table -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">#</th>
-                        <th>Buy (RM)</th>
-                        <th>Gold (Gram)</th>
-                        <th>Gold/Gram (RM)</th>
-                        <th>Spread/Gram (RM)</th>
-                    </tr>
-                </thead>
-                <tbody id="comparisonBody">
-                    <!-- Row 1 -->
-                    <tr class="data-row" id="row-0">
-                        <td style="text-align: center; color: #666;">1</td>
-                        <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                        <td><input type="number" class="table-input weight-input" value="0.014" step="0.001" oninput="calculateAll()"></td>
-                        <td class="result-cell cost-output">-</td>
-                        <td class="result-cell spread-output">-</td>
-                    </tr>
-                    <!-- Row 2 -->
-                    <tr class="data-row" id="row-1">
-                        <td style="text-align: center; color: #666;">2</td>
-                        <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                        <td><input type="number" class="table-input weight-input" value="0.015" step="0.001" oninput="calculateAll()"></td>
-                        <td class="result-cell cost-output">-</td>
-                        <td class="result-cell spread-output">-</td>
-                    </tr>
-                    <!-- Row 3 -->
-                    <tr class="data-row" id="row-2">
-                        <td style="text-align: center; color: #666;">3</td>
-                        <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                        <td><input type="number" class="table-input weight-input" value="0.016" step="0.001" oninput="calculateAll()"></td>
-                        <td class="result-cell cost-output">-</td>
-                        <td class="result-cell spread-output">-</td>
-                    </tr>
-                    <!-- Row 4 -->
-                    <tr class="data-row" id="row-3">
-                        <td style="text-align: center; color: #666;">4</td>
-                        <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                        <td><input type="number" class="table-input weight-input" value="0.017" step="0.001" oninput="calculateAll()"></td>
-                        <td class="result-cell cost-output">-</td>
-                        <td class="result-cell spread-output">-</td>
-                    </tr>
-                    <!-- Row 5 -->
-                    <tr class="data-row" id="row-4">
-                        <td style="text-align: center; color: #666;">5</td>
-                        <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                        <td><input type="number" class="table-input weight-input" value="0.018" step="0.001" oninput="calculateAll()"></td>
-                        <td class="result-cell cost-output">-</td>
-                        <td class="result-cell spread-output">-</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Automatic Suggestion Box -->
-        <div id="suggestionArea" class="suggestion-box">
-            <span class="suggestion-icon">💡</span>
-            <span id="suggestionText" class="suggestion-text"></span>
-        </div>
-        
-        <div id="errorArea" class="error-msg"></div>
 
     </div>
 
     <script>
+        // State to hold the current best deal for saving
+        let currentBestDeal = null;
+
+        // Initialize History on Load
+        window.onload = function() {
+            loadHistory();
+        };
+
+        // Main Tab Switching Logic
+        function switchMainTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.main-tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
         // Calculator Logic
         function calculateAll() {
-            // 1. Get Global Market Price
             const marketPriceInput = document.getElementById('marketPrice');
             const marketPrice = parseFloat(marketPriceInput.value);
             const errorArea = document.getElementById('errorArea');
             const suggestionArea = document.getElementById('suggestionArea');
             const suggestionText = document.getElementById('suggestionText');
 
-            // Reset Error & Suggestion
             errorArea.style.display = 'none';
             suggestionArea.style.display = 'none';
+            currentBestDeal = null; // Reset best deal
 
-            // 2. Loop through all rows
             const rows = document.querySelectorAll('.data-row');
             
-            let minCostPerGram = Infinity;
-            let bestWeight = null;
-            let bestRowId = null;
+            let maxCostPerGram = -Infinity; 
+            let bestDealObj = null;
 
             rows.forEach(row => {
-                // Reset styling
                 row.classList.remove('best-deal');
 
                 const buyInput = row.querySelector('.buy-input');
@@ -455,18 +590,14 @@
                 const buyVal = parseFloat(buyInput.value);
                 const weightVal = parseFloat(weightInput.value);
 
-                // Check inputs for calculation
                 const validMarket = !isNaN(marketPrice) && marketPrice > 0;
                 const validRow = !isNaN(buyVal) && !isNaN(weightVal) && weightVal > 0;
 
-                // Calculation
                 if (validRow) {
                     const costPerGram = buyVal / weightVal;
                     
-                    // Display Cost/Gram even if Market Price is missing
                     costOutput.innerText = costPerGram.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
                     
-                    // Spread calculation requires Market Price
                     if (validMarket) {
                         const spreadPerGram = costPerGram - marketPrice;
                         const sign = spreadPerGram > 0 ? "+" : "";
@@ -477,37 +608,101 @@
                         spreadOutput.style.color = "inherit";
                     }
 
-                    // Track Best Deal (Lowest Cost Per Gram)
-                    if (costPerGram < minCostPerGram) {
-                        minCostPerGram = costPerGram;
-                        bestWeight = weightVal;
-                        bestRowId = row.id;
+                    if (costPerGram > maxCostPerGram) { 
+                        maxCostPerGram = costPerGram;
+                        bestDealObj = {
+                            weight: weightVal,
+                            costPerGram: costPerGram,
+                            buyAmount: buyVal,
+                            rowId: row.id
+                        };
                     }
-
                 } else {
-                    // Clear outputs if inputs are invalid/empty
                     costOutput.innerText = "-";
                     spreadOutput.innerText = "-";
                     spreadOutput.style.color = "inherit";
                 }
             });
 
-            // 3. Display Suggestion if we found a valid calculation
-            if (bestWeight !== null) {
-                suggestionText.innerText = `Belian ${bestWeight}g adalah lebih menguntungkan`;
+            if (bestDealObj !== null) {
+                suggestionText.innerText = `Belian ${bestDealObj.weight}g adalah lebih menguntungkan`;
                 suggestionArea.style.display = 'block';
-                
-                // Optional: Highlight the row slightly
-                if(bestRowId) {
-                    document.getElementById(bestRowId).classList.add('best-deal');
+                if(bestDealObj.rowId) {
+                    document.getElementById(bestDealObj.rowId).classList.add('best-deal');
                 }
+                currentBestDeal = bestDealObj;
+            }
+        }
+
+        // HISTORY FUNCTIONS
+
+        function saveBestDeal() {
+            if (!currentBestDeal) return;
+
+            const newRecord = {
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                weight: currentBestDeal.weight,
+                costPerGram: currentBestDeal.costPerGram,
+                buyAmount: currentBestDeal.buyAmount,
+                timestamp: Date.now() // For sorting
+            };
+
+            let history = getHistory();
+            history.unshift(newRecord); // Add to top
+            // Keep only top 50 to prevent overflow
+            if(history.length > 50) history.pop();
+            
+            localStorage.setItem('goldCalcHistory', JSON.stringify(history));
+            
+            // Refresh table and alert user
+            renderHistoryTable(history);
+            alert("Record saved to Deal History!");
+        }
+
+        function getHistory() {
+            const stored = localStorage.getItem('goldCalcHistory');
+            if (stored) return JSON.parse(stored);
+            
+            // Only return empty array (real user data only)
+            return [];
+        }
+
+        function loadHistory() {
+            const history = getHistory();
+            renderHistoryTable(history);
+        }
+
+        function renderHistoryTable(data) {
+            const tbody = document.getElementById('historyBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="4" style="text-align:center; padding:2rem; color:#666;">No history saved yet.</td>`;
+                tbody.appendChild(row);
+                return;
             }
             
-            // Helpful hint if they type in rows but forget market price
-            const anyRowHasData = Array.from(rows).some(r => r.querySelector('.buy-input').value);
-            if (anyRowHasData && (isNaN(marketPrice) || marketPrice <= 0)) {
-                // We don't block the suggestion because suggestion is based on lowest Cost/Gram which doesn't need Market Price
-                // But we can show a small warning or just let the spread be "-"
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div style="font-weight:bold;">${item.date}</div>
+                        <div class="history-date">${item.time}</div>
+                    </td>
+                    <td>${item.weight}g</td>
+                    <td style="color:#d4af37; font-weight:bold;">RM ${item.costPerGram.toFixed(2)}</td>
+                    <td>RM ${item.buyAmount.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function clearHistory() {
+            if(confirm("Are you sure you want to clear history?")) {
+                localStorage.removeItem('goldCalcHistory');
+                loadHistory(); 
             }
         }
     </script>
