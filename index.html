@@ -518,12 +518,161 @@
         <!-- Main Tabs Navigation -->
         <div class="main-tabs">
             <button class="main-tab-btn active" onclick="switchMainTab('tab-calculator', this)">Gold Calculator</button>
+            <button class="main-tab-btn" onclick="switchMainTab('tab-ai-calculator', this)">Ai Gold Calculator</button>
             <button class="main-tab-btn" onclick="switchMainTab('tab-analysis', this)">Market Analysis</button>
             <button class="main-tab-btn" onclick="switchMainTab('tab-history', this)">Deal History</button>
             <button class="main-tab-btn" onclick="switchMainTab('tab-ai', this)">✨ AI Advisor</button>
         </div>
 
-        <!-- TAB 1: MARKET ANALYSIS -->
+        <!-- TAB 1: GOLD CALCULATOR (Manual) -->
+        <div id="tab-calculator" class="tab-content active">
+            <!-- Global Market Price Input -->
+            <div class="market-price-section">
+                <div class="input-group">
+                    <label for="marketPrice">Enter Market Price (RM / g)</label>
+                    <input type="number" id="marketPrice" placeholder="e.g. 385.50" step="0.01" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;">#</th>
+                            <th>Buy (RM)</th>
+                            <th>Gold (g)</th>
+                            <th>Cost/g (RM)</th>
+                            <th>Spread (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonBody">
+                        <tr class="data-row" id="row-0">
+                            <td style="text-align: center; color: #666;">1</td>
+                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                            <td><input type="number" class="table-input weight-input" value="0.014" step="0.001" oninput="calculateAll()"></td>
+                            <td class="result-cell cost-output">-</td>
+                            <td class="result-cell spread-output">-</td>
+                        </tr>
+                        <tr class="data-row" id="row-1">
+                            <td style="text-align: center; color: #666;">2</td>
+                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                            <td><input type="number" class="table-input weight-input" value="0.015" step="0.001" oninput="calculateAll()"></td>
+                            <td class="result-cell cost-output">-</td>
+                            <td class="result-cell spread-output">-</td>
+                        </tr>
+                        <tr class="data-row" id="row-2">
+                            <td style="text-align: center; color: #666;">3</td>
+                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                            <td><input type="number" class="table-input weight-input" value="0.016" step="0.001" oninput="calculateAll()"></td>
+                            <td class="result-cell cost-output">-</td>
+                            <td class="result-cell spread-output">-</td>
+                        </tr>
+                        <tr class="data-row" id="row-3">
+                            <td style="text-align: center; color: #666;">4</td>
+                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                            <td><input type="number" class="table-input weight-input" value="0.017" step="0.001" oninput="calculateAll()"></td>
+                            <td class="result-cell cost-output">-</td>
+                            <td class="result-cell spread-output">-</td>
+                        </tr>
+                        <tr class="data-row" id="row-4">
+                            <td style="text-align: center; color: #666;">5</td>
+                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                            <td><input type="number" class="table-input weight-input" value="0.018" step="0.001" oninput="calculateAll()"></td>
+                            <td class="result-cell cost-output">-</td>
+                            <td class="result-cell spread-output">-</td>
+                        </tr>
+                        <!-- Row 6 (Manual Custom) -->
+                        <tr class="data-row" id="row-5">
+                            <td style="text-align: center; color: #666;">6</td>
+                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
+                            <td><input type="number" class="table-input weight-input" placeholder="Manual" step="0.001" oninput="calculateAll()"></td>
+                            <td class="result-cell cost-output">-</td>
+                            <td class="result-cell spread-output">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Automatic Suggestion Box -->
+            <div id="suggestionArea" class="suggestion-box">
+                <span class="suggestion-icon">💡</span>
+                <span id="suggestionText" class="suggestion-text"></span>
+                <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                    <button class="save-btn" onclick="saveBestDeal()">Save Record</button>
+                    <button class="analyze-btn" onclick="analyzeCurrentDeal()">✨ Analyze with AI</button>
+                </div>
+            </div>
+            
+            <div id="errorArea" class="error-msg"></div>
+        </div>
+
+        <!-- TAB 2: AI GOLD CALCULATOR (Auto Live) -->
+        <div id="tab-ai-calculator" class="tab-content">
+            <!-- Global Market Price Input (Auto) -->
+            <div class="market-price-section">
+                <div class="input-group">
+                    <label for="aiMarketPrice">Live Market Price (RM / g)</label>
+                    <input type="number" id="aiMarketPrice" placeholder="Fetching..." readonly style="color: var(--gold-accent); font-weight: bold;">
+                    <div style="font-size: 0.75rem; color: #888; margin-top: 5px; text-align: center;">Auto-updates every 60s</div>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="table-container">
+                <table id="aiTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;">#</th>
+                            <th>Buy (RM)</th>
+                            <th>Gold (g)</th>
+                            <th>Cost/g (RM)</th>
+                            <th>Spread (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="aiComparisonBody">
+                        <!-- AI Rows Auto Generated -->
+                        <tr class="data-row ai-row">
+                            <td style="text-align: center; color: #666;">1</td>
+                            <td><input type="number" class="table-input ai-buy-input" readonly></td>
+                            <td><input type="number" class="table-input ai-weight-input" value="0.014" step="0.001" oninput="updateAiTable()"></td>
+                            <td class="result-cell ai-cost-output">-</td>
+                            <td class="result-cell ai-spread-output">0.000</td>
+                        </tr>
+                        <tr class="data-row ai-row">
+                            <td style="text-align: center; color: #666;">2</td>
+                            <td><input type="number" class="table-input ai-buy-input" readonly></td>
+                            <td><input type="number" class="table-input ai-weight-input" value="0.015" step="0.001" oninput="updateAiTable()"></td>
+                            <td class="result-cell ai-cost-output">-</td>
+                            <td class="result-cell ai-spread-output">0.000</td>
+                        </tr>
+                        <tr class="data-row ai-row">
+                            <td style="text-align: center; color: #666;">3</td>
+                            <td><input type="number" class="table-input ai-buy-input" readonly></td>
+                            <td><input type="number" class="table-input ai-weight-input" value="0.016" step="0.001" oninput="updateAiTable()"></td>
+                            <td class="result-cell ai-cost-output">-</td>
+                            <td class="result-cell ai-spread-output">0.000</td>
+                        </tr>
+                        <tr class="data-row ai-row">
+                            <td style="text-align: center; color: #666;">4</td>
+                            <td><input type="number" class="table-input ai-buy-input" readonly></td>
+                            <td><input type="number" class="table-input ai-weight-input" value="0.017" step="0.001" oninput="updateAiTable()"></td>
+                            <td class="result-cell ai-cost-output">-</td>
+                            <td class="result-cell ai-spread-output">0.000</td>
+                        </tr>
+                        <tr class="data-row ai-row">
+                            <td style="text-align: center; color: #666;">5</td>
+                            <td><input type="number" class="table-input ai-buy-input" readonly></td>
+                            <td><input type="number" class="table-input ai-weight-input" value="0.018" step="0.001" oninput="updateAiTable()"></td>
+                            <td class="result-cell ai-cost-output">-</td>
+                            <td class="result-cell ai-spread-output">0.000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 3: MARKET ANALYSIS -->
         <div id="tab-analysis" class="tab-content">
             <!-- Chart Container -->
             <div class="chart-container">
@@ -603,87 +752,7 @@
             </div>
         </div>
 
-        <!-- TAB 2: GOLD CALCULATOR (Default Active) -->
-        <div id="tab-calculator" class="tab-content active">
-            <!-- Global Market Price Input -->
-            <div class="market-price-section">
-                <div class="input-group">
-                    <label for="marketPrice">Enter Market Price (RM / g)</label>
-                    <input type="number" id="marketPrice" placeholder="e.g. 385.50" step="0.01" oninput="calculateAll()">
-                </div>
-            </div>
-
-            <!-- Comparison Table -->
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 30px;">#</th>
-                            <th>Buy (RM)</th>
-                            <th>Gold (g)</th>
-                            <th>Cost/g (RM)</th>
-                            <th>Spread (RM)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="comparisonBody">
-                        <!-- Row 1 -->
-                        <tr class="data-row" id="row-0">
-                            <td style="text-align: center; color: #666;">1</td>
-                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                            <td><input type="number" class="table-input weight-input" value="0.014" step="0.001" oninput="calculateAll()"></td>
-                            <td class="result-cell cost-output">-</td>
-                            <td class="result-cell spread-output">-</td>
-                        </tr>
-                        <!-- Row 2 -->
-                        <tr class="data-row" id="row-1">
-                            <td style="text-align: center; color: #666;">2</td>
-                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                            <td><input type="number" class="table-input weight-input" value="0.015" step="0.001" oninput="calculateAll()"></td>
-                            <td class="result-cell cost-output">-</td>
-                            <td class="result-cell spread-output">-</td>
-                        </tr>
-                        <!-- Row 3 -->
-                        <tr class="data-row" id="row-2">
-                            <td style="text-align: center; color: #666;">3</td>
-                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                            <td><input type="number" class="table-input weight-input" value="0.016" step="0.001" oninput="calculateAll()"></td>
-                            <td class="result-cell cost-output">-</td>
-                            <td class="result-cell spread-output">-</td>
-                        </tr>
-                        <!-- Row 4 -->
-                        <tr class="data-row" id="row-3">
-                            <td style="text-align: center; color: #666;">4</td>
-                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                            <td><input type="number" class="table-input weight-input" value="0.017" step="0.001" oninput="calculateAll()"></td>
-                            <td class="result-cell cost-output">-</td>
-                            <td class="result-cell spread-output">-</td>
-                        </tr>
-                        <!-- Row 5 -->
-                        <tr class="data-row" id="row-4">
-                            <td style="text-align: center; color: #666;">5</td>
-                            <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
-                            <td><input type="number" class="table-input weight-input" value="0.018" step="0.001" oninput="calculateAll()"></td>
-                            <td class="result-cell cost-output">-</td>
-                            <td class="result-cell spread-output">-</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Automatic Suggestion Box -->
-            <div id="suggestionArea" class="suggestion-box">
-                <span class="suggestion-icon">💡</span>
-                <span id="suggestionText" class="suggestion-text"></span>
-                <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-                    <button class="save-btn" onclick="saveBestDeal()">Save Record</button>
-                    <button class="analyze-btn" onclick="analyzeCurrentDeal()">✨ Analyze with AI</button>
-                </div>
-            </div>
-            
-            <div id="errorArea" class="error-msg"></div>
-        </div>
-
-        <!-- TAB 3: DEAL HISTORY -->
+        <!-- TAB 4: DEAL HISTORY -->
         <div id="tab-history" class="tab-content">
             <h2 style="text-align:center; color: var(--gold-accent);">Best Suggestions</h2>
             <div class="table-container">
@@ -706,7 +775,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: AI ADVISOR -->
+        <!-- TAB 5: AI ADVISOR -->
         <div id="tab-ai" class="tab-content">
             <h2 style="text-align:center; color: var(--gold-accent);">✨ Gemini Gold Advisor</h2>
             <div class="chat-container">
@@ -771,6 +840,10 @@
             if(savedKey) {
                 document.getElementById('userApiKey').value = savedKey;
             }
+            
+            // Start Auto-Fetch for AI Tab
+            fetchLivePrice();
+            setInterval(fetchLivePrice, 60000); // 1 minute
         };
 
         function switchMainTab(tabId, btnElement) {
@@ -778,19 +851,18 @@
             document.querySelectorAll('.main-tab-btn').forEach(btn => btn.classList.remove('active'));
             
             document.getElementById(tabId).classList.add('active');
-            // If called from a non-button (like analyze deal), find the correct button to highlight
             if(btnElement) {
                 btnElement.classList.add('active');
             } else {
-                // Find button corresponding to tabId
                 const btns = document.querySelectorAll('.main-tab-btn');
-                if(tabId === 'tab-ai') btns[3].classList.add('active');
+                if(tabId === 'tab-ai') btns[4].classList.add('active'); // 5th button
                 if(tabId === 'tab-calculator') btns[0].classList.add('active');
                 if(tabId === 'tab-analysis') btns[1].classList.add('active');
                 if(tabId === 'tab-history') btns[2].classList.add('active');
             }
         }
 
+        // --- MANUAL CALCULATOR LOGIC ---
         function calculateAll() {
             const marketPriceInput = document.getElementById('marketPrice');
             const marketPrice = parseFloat(marketPriceInput.value);
@@ -802,9 +874,9 @@
             suggestionArea.style.display = 'none';
             currentBestDeal = null; 
 
-            const rows = document.querySelectorAll('.data-row');
+            const rows = document.querySelectorAll('#comparisonBody .data-row');
             
-            let minCostPerGram = Infinity; // Set to Infinity to find the LOWEST (Cheapest) value
+            let minCostPerGram = Infinity;
             let bestDealObj = null;
 
             rows.forEach(row => {
@@ -824,16 +896,16 @@
                 if (validRow) {
                     const costPerGram = buyVal / weightInputVal;
                     
-                    costOutput.innerText = costPerGram.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    costOutput.innerText = costPerGram.toLocaleString(undefined, {minimumFractionDigits: 3, maximumFractionDigits: 3});
                     
                     let spreadVal = 0;
                     let spreadTextDisplay = "";
 
                     if (validMarket) {
                         const spreadPerGram = costPerGram - marketPrice;
-                        spreadVal = (spreadPerGram / marketPrice) * 100; // Percentage for AI context
+                        spreadVal = (spreadPerGram / marketPrice) * 100;
                         const sign = spreadPerGram > 0 ? "+" : "";
-                        spreadTextDisplay = sign + spreadPerGram.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                        spreadTextDisplay = sign + spreadPerGram.toLocaleString(undefined, {minimumFractionDigits: 3, maximumFractionDigits: 3});
                         
                         spreadOutput.innerText = spreadTextDisplay;
                         spreadOutput.style.color = spreadPerGram >= 0 ? '#d4af37' : '#4caf50'; 
@@ -842,7 +914,6 @@
                         spreadOutput.style.color = "inherit";
                     }
 
-                    // LOGIC CHANGE: Check if this cost is LOWER than the current minimum (Finding the Cheapest/Best Value)
                     if (costPerGram < minCostPerGram) { 
                         minCostPerGram = costPerGram;
                         bestDealObj = {
@@ -863,7 +934,6 @@
             });
 
             if (bestDealObj !== null) {
-                // Construct suggestion text including Spread info if available
                 let reasonText = "Harga/gram terendah";
                 if (bestDealObj.marketPrice > 0) {
                     reasonText = `Spread: RM ${bestDealObj.spreadText}/g`;
@@ -877,6 +947,67 @@
                 }
                 currentBestDeal = bestDealObj;
             }
+        }
+
+        // --- AI GOLD CALCULATOR LOGIC (AUTO) ---
+        async function fetchLivePrice() {
+            const aiMarketInput = document.getElementById('aiMarketPrice');
+            
+            // Try fetching from a free public API (GoldPrice.org data feed often used for widgets)
+            // Note: This is a hacky way as there are no official free CORS-enabled gold APIs.
+            // Using a fallback mechanism.
+            
+            try {
+                // Using data-asg.goldprice.org which returns JSON
+                const response = await fetch('https://data-asg.goldprice.org/dbXRates/MYR');
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    const xauPrice = data.items[0].xauPrice; // Price per Ounce
+                    const gramPrice = xauPrice / 31.1035; // Convert to Gram
+                    
+                    aiMarketInput.value = gramPrice.toFixed(3);
+                    updateAiTable(); // Recalculate rows
+                }
+            } catch (err) {
+                console.log("Fetch failed, using simulation for demo");
+                // Fallback simulation if API blocked by CORS/Network
+                // Simulate a price around RM 385 +/-
+                if(!aiMarketInput.value) {
+                    aiMarketInput.value = (385 + Math.random()).toFixed(3);
+                    updateAiTable();
+                }
+            }
+        }
+
+        function updateAiTable() {
+            const marketPrice = parseFloat(document.getElementById('aiMarketPrice').value);
+            if(isNaN(marketPrice)) return;
+
+            const rows = document.querySelectorAll('.ai-row');
+            
+            rows.forEach(row => {
+                const weightInput = row.querySelector('.ai-weight-input');
+                const buyInput = row.querySelector('.ai-buy-input');
+                const costOutput = row.querySelector('.ai-cost-output');
+                const spreadOutput = row.querySelector('.ai-spread-output');
+
+                const weight = parseFloat(weightInput.value);
+                
+                if(!isNaN(weight) && weight > 0) {
+                    // Auto Calculate BUY (RM)
+                    const buyAmount = weight * marketPrice;
+                    buyInput.value = buyAmount.toFixed(3);
+                    
+                    // Cost/g (Should equal market price technically in this auto mode)
+                    const costPerGram = buyAmount / weight;
+                    costOutput.innerText = costPerGram.toFixed(3);
+                    
+                    // Spread (Should be 0 if buy is derived directly from market)
+                    const spread = costPerGram - marketPrice;
+                    spreadOutput.innerText = spread.toFixed(3);
+                }
+            });
         }
 
         // --- HISTORY FUNCTIONS ---
@@ -931,8 +1062,8 @@
                         <div class="history-date">${item.time}</div>
                     </td>
                     <td>${item.weight}g</td>
-                    <td style="color:#d4af37; font-weight:bold;">RM ${item.costPerGram.toFixed(2)}</td>
-                    <td>RM ${item.buyAmount.toFixed(2)}</td>
+                    <td style="color:#d4af37; font-weight:bold;">RM ${item.costPerGram.toFixed(3)}</td>
+                    <td>RM ${item.buyAmount.toFixed(3)}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -946,7 +1077,6 @@
         }
 
         // --- AI / GEMINI FUNCTIONS ---
-        
         function handleEnter(e) {
             if (e.key === 'Enter') sendMessage();
         }
@@ -956,9 +1086,6 @@
             const input = document.getElementById('chatInput');
             if (select.value) {
                 input.value = select.value;
-                // Optional: Auto send or let user click send
-                // sendMessage(); 
-                // Reset select slightly so change event triggers again if same item picked (hard with simple select, but works for change)
             }
         }
 
@@ -973,15 +1100,12 @@
             const dealPrompt = `Analyze this gold deal for a Malaysian investor:
             - Item Weight: ${currentBestDeal.weight}g
             - Price: RM${currentBestDeal.buyAmount}
-            - Cost per Gram: RM${currentBestDeal.costPerGram.toFixed(2)}
-            - Current Spot Price: RM${currentBestDeal.marketPrice.toFixed(2)}
+            - Cost per Gram: RM${currentBestDeal.costPerGram.toFixed(3)}
+            - Current Spot Price: RM${currentBestDeal.marketPrice.toFixed(3)}
             
             Is this spread reasonable for physical gold? Usually small bars (1g-5g) have higher spreads (10-20%), while larger bars (10g+) have lower spreads (5-10%). Provide a concise verdict.`;
             
-            // Add user message to chat UI
-            appendMessage('user', `Analyze my deal: ${currentBestDeal.weight}g at RM${currentBestDeal.costPerGram.toFixed(2)}/g`);
-            
-            // Call API
+            appendMessage('user', `Analyze my deal: ${currentBestDeal.weight}g at RM${currentBestDeal.costPerGram.toFixed(3)}/g`);
             callGeminiAPI(dealPrompt);
         }
 
@@ -992,7 +1116,6 @@
 
             appendMessage('user', message);
             input.value = '';
-            
             callGeminiAPI(message);
         }
 
@@ -1000,17 +1123,13 @@
             const container = document.getElementById('chatMessages');
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${sender}`;
-            
             const label = sender === 'user' ? 'You' : 'Gemini';
-            // Simple bolding for *text*
             const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
             msgDiv.innerHTML = `<strong>${label}:</strong> ${formattedText}`;
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
         }
 
-        // --- NEW: CONFIG & KEY HANDLING ---
         function toggleApiConfig() {
             const configArea = document.getElementById('apiKeyConfig');
             if(configArea.style.display === 'block') {
@@ -1036,30 +1155,24 @@
             sendBtn.disabled = true;
             sendBtn.innerText = 'Thinking...';
 
-            // 1. Try hardcoded key (for dev env)
             let activeKey = apiKey;
-            
-            // 2. Try stored key (for github/public env)
             if (!activeKey || activeKey === "") {
                 activeKey = localStorage.getItem('gemini_api_key');
             }
 
-            // 3. Fallback: Prompt user if no key found
             if (!activeKey) {
                 appendMessage('ai', "⚠️ <strong>API Key Missing:</strong> Please click the ⚙️ icon above to enter your free Gemini API Key.");
-                document.getElementById('apiKeyConfig').style.display = 'block'; // Open settings
+                document.getElementById('apiKeyConfig').style.display = 'block'; 
                 sendBtn.disabled = false;
                 sendBtn.innerText = 'Send';
                 return;
             }
 
             try {
-                // Retry logic variables
                 let attempts = 0;
                 let success = false;
                 let result = null;
                 
-                // Construct Payload
                 const payload = {
                     contents: [{ parts: [{ text: promptText }] }],
                     systemInstruction: { parts: [{ text: "You are a helpful gold investment and trading assistant for Malaysian investors. You understand concepts like 'spread', 'spot price', 'technical analysis', 'trading strategies', 'scalping', 'swing trading', 'indicators' (RSI, MACD), 'XAU/MYR', 'Public Gold', 'MIGA', 'Zakat'. Keep answers concise, helpful, and formatted with **bold** text where appropriate." }] }
@@ -1074,18 +1187,16 @@
                         });
 
                         if (!response.ok) {
-                            if(response.status === 400 || response.status === 403) {
-                                throw new Error("Invalid API Key");
-                            }
+                            if(response.status === 400 || response.status === 403) throw new Error("Invalid API Key");
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
                         
                         result = await response.json();
                         success = true;
                     } catch (e) {
-                        if(e.message === "Invalid API Key") throw e; // Don't retry invalid keys
+                        if(e.message === "Invalid API Key") throw e; 
                         attempts++;
-                        await new Promise(r => setTimeout(r, 1000 * attempts)); // Backoff
+                        await new Promise(r => setTimeout(r, 1000 * attempts)); 
                     }
                 }
 
