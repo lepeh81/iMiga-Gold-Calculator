@@ -47,13 +47,34 @@
             width: 100%;
             max-width: 900px; 
             border-top: 5px solid var(--gold-accent);
+            position: relative;
+        }
+
+        /* Mode Switcher Styling */
+        .mode-switcher {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .mode-label {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            font-weight: bold;
+            text-transform: uppercase;
         }
 
         h1 {
             text-align: center;
             color: var(--gold-accent);
             margin-bottom: 0.5rem;
-            margin-top: 0;
+            margin-top: 1rem;
             font-size: 1.5rem;
         }
 
@@ -157,6 +178,13 @@
 
         .insight-box strong {
             color: var(--gold-accent);
+        }
+
+        .disclaimer {
+            font-size: 0.8rem;
+            margin-top: 0.8rem;
+            font-style: italic;
+            opacity: 0.7;
         }
 
         /* Top Section for Market Price Input */
@@ -600,20 +628,30 @@
 <body>
 
     <div class="calculator-card">
+        <!-- MODE SWITCHER -->
+        <div class="mode-switcher">
+            <span id="appModeLabel" class="mode-label" style="color:#fff;">Beginner</span>
+            <label class="switch" style="width:34px; height:18px;">
+                <input type="checkbox" id="appModeToggle" onchange="toggleAppMode()">
+                <span class="slider round" style="background-color: #555;"></span>
+            </label>
+            <span class="mode-label">Expert</span>
+        </div>
+
         <h1>iMiga Gold Calculator by Lepeh</h1>
         <p class="subtitle">Compare purchase options against the market price.</p>
 
-        <!-- Main Tabs Navigation -->
-        <div class="main-tabs">
-            <button class="main-tab-btn active" onclick="switchMainTab('tab-calculator', this)">Gold Calculator</button>
-            <button class="main-tab-btn" onclick="switchMainTab('tab-ai-calculator', this)">Ai Gold Calculator</button>
+        <!-- Main Tabs Navigation (Hidden in Beginner Mode) -->
+        <div class="main-tabs" id="mainTabsNav" style="display:none;">
+            <button class="main-tab-btn" onclick="switchMainTab('tab-calculator', this)">Gold Calculator</button>
+            <button class="main-tab-btn active" onclick="switchMainTab('tab-ai-calculator', this)">Ai Gold Calculator</button>
             <button class="main-tab-btn" onclick="switchMainTab('tab-analysis', this)">Market Analysis</button>
             <button class="main-tab-btn" onclick="switchMainTab('tab-history', this)">Deal History</button>
             <button class="main-tab-btn" onclick="switchMainTab('tab-ai', this)">✨ AI Advisor</button>
         </div>
 
         <!-- TAB 1: GOLD CALCULATOR (Manual) -->
-        <div id="tab-calculator" class="tab-content active">
+        <div id="tab-calculator" class="tab-content">
             <!-- Global Market Price Input -->
             <div class="market-price-section">
                 <div class="input-group">
@@ -695,13 +733,13 @@
             <div id="errorArea" class="error-msg"></div>
         </div>
 
-        <!-- TAB 2: AI GOLD CALCULATOR (Auto Live) -->
-        <div id="tab-ai-calculator" class="tab-content">
+        <!-- TAB 2: AI GOLD CALCULATOR (Auto Live - Simplified in Beginner) -->
+        <div id="tab-ai-calculator" class="tab-content active">
             <!-- Global Market Price Input (Auto) -->
             <div class="market-price-section">
                 <div class="input-group" style="position: relative;">
                     <!-- Auto/Manual Switch -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <div id="priceToggleContainer" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                         <label for="aiMarketPrice" style="margin-bottom: 0;">Live Market Price (Spot) RM/g</label>
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span id="modeLabel" style="font-size: 0.8rem; color: var(--text-gray);">Auto</span>
@@ -712,10 +750,18 @@
                         </div>
                     </div>
 
+                    <!-- Label for Beginner Mode Only -->
+                    <label id="beginnerLabel" style="display:none; text-align:center; margin-bottom:5px; font-size:0.95rem; color:var(--gold-accent);">Current Standard Price (RM)</label>
+
                     <input type="number" id="aiMarketPrice" placeholder="Fetching..." oninput="updateAiTable()" readonly style="color: var(--gold-accent); font-weight: bold;">
                     
                     <div id="modeDescription" style="font-size: 0.75rem; color: #888; margin-top: 8px; text-align: center;">
                         <strong>Auto Mode:</strong> Price updates live every 60s.<br>Switch to Manual to enter your own price.
+                    </div>
+                    
+                    <!-- Notes for Beginner Mode -->
+                    <div id="beginnerNote" style="display:none; font-size: 0.8rem; color: #ffeb3b; margin-top: 8px; text-align: center; font-style:italic;">
+                        Sila masukkan harga Current standard price seperti yang dipaparkan di aplikasi Miga-i Gold.
                     </div>
                 </div>
             </div>
@@ -959,6 +1005,8 @@
         let currentBestDeal = null;
         // ESTIMATED MIGA-i SPREAD PERCENTAGE (e.g. 1.5%)
         const MIGA_SPREAD_PERCENTAGE = 0.015; 
+        
+        let appMode = 'beginner'; // Default mode
 
         window.onload = function() {
             loadHistory();
@@ -968,10 +1016,82 @@
                 document.getElementById('userApiKey').value = savedKey;
             }
             
-            // Start Auto-Fetch for AI Tab
+            // Set Default Mode to Beginner
+            setAppMode('beginner');
+            document.getElementById('appModeToggle').checked = false; // Slider left = beginner
+
+            // Start Auto-Fetch for AI Tab (used in Expert Mode)
             fetchLivePrice();
             setInterval(fetchLivePrice, 60000); // 1 minute
         };
+
+        // --- APP MODE SWITCHER ---
+        function toggleAppMode() {
+            const toggle = document.getElementById('appModeToggle');
+            const mode = toggle.checked ? 'expert' : 'beginner';
+            setAppMode(mode);
+        }
+
+        function setAppMode(mode) {
+            appMode = mode;
+            const tabsNav = document.getElementById('mainTabsNav');
+            const beginnerLabel = document.getElementById('beginnerLabel');
+            const beginnerNote = document.getElementById('beginnerNote');
+            const priceToggleContainer = document.getElementById('priceToggleContainer');
+            const modeDesc = document.getElementById('modeDescription');
+            const aiMarketInput = document.getElementById('aiMarketPrice');
+            const aiBuyInputs = document.querySelectorAll('.ai-buy-input');
+
+            // Reset tabs visibility first
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+
+            if(mode === 'beginner') {
+                // BEGINNER MODE: 
+                // Hide Tabs Nav
+                tabsNav.style.display = 'none';
+                
+                // Show AI Calculator Tab content ONLY
+                document.getElementById('tab-ai-calculator').classList.add('active');
+                
+                // Configure AI Calculator for Beginner
+                priceToggleContainer.style.display = 'none'; // Hide Auto switch
+                modeDesc.style.display = 'none'; // Hide auto desc
+                
+                beginnerLabel.style.display = 'block'; // Show "Standard Price" Label
+                beginnerNote.style.display = 'block'; // Show specific note
+                
+                // Enforce Manual Mode for Input
+                aiMarketInput.readOnly = false;
+                aiMarketInput.placeholder = "Enter Price e.g. 662.16";
+                aiMarketInput.style.borderColor = "#fff";
+                
+                // Ensure columns are ReadOnly as per original AI calc logic (optimized buy)
+                // But note: In manual mode for AI calc, we calculate based on manual market price input
+                
+            } else {
+                // EXPERT MODE:
+                // Show Tabs Nav
+                tabsNav.style.display = 'flex';
+                
+                // Show AI Calculator Tab by default or keep current? Let's show AI calc default
+                // Activate the corresponding button
+                const btns = document.querySelectorAll('.main-tab-btn');
+                btns.forEach(b => b.classList.remove('active'));
+                
+                // Switch to AI Calculator tab generally to be safe/consistent
+                switchMainTab('tab-ai-calculator', btns[1]); 
+                
+                // Restore Expert UI elements
+                priceToggleContainer.style.display = 'flex';
+                modeDesc.style.display = 'block';
+                beginnerLabel.style.display = 'none';
+                beginnerNote.style.display = 'none';
+                
+                // Reset toggle to Auto (default state for Expert)
+                document.getElementById('priceModeToggle').checked = true;
+                togglePriceMode(); // Apply Auto logic
+            }
+        }
 
         function switchMainTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -980,13 +1100,6 @@
             document.getElementById(tabId).classList.add('active');
             if(btnElement) {
                 btnElement.classList.add('active');
-            } else {
-                const btns = document.querySelectorAll('.main-tab-btn');
-                if(tabId === 'tab-ai') btns[4].classList.add('active'); // 5th button
-                if(tabId === 'tab-calculator') btns[0].classList.add('active');
-                if(tabId === 'tab-analysis') btns[1].classList.add('active');
-                if(tabId === 'tab-history') btns[2].classList.add('active');
-                if(tabId === 'tab-ai-calculator') btns[1].classList.add('active');
             }
         }
 
@@ -1105,9 +1218,12 @@
         async function fetchLivePrice() {
             const aiMarketInput = document.getElementById('aiMarketPrice');
             
-            // Check if Auto Mode is Active
+            // Check if Auto Mode is Active AND we are in Expert Mode
+            // (Beginner Mode is strictly manual, so don't overwrite if interval runs)
+            if(appMode === 'beginner') return;
+
             const isAuto = document.getElementById('priceModeToggle').checked;
-            if(!isAuto) return; // Don't update if in manual mode
+            if(!isAuto) return; 
 
             try {
                 // Using data-asg.goldprice.org which returns JSON
@@ -1156,7 +1272,6 @@
                 
                 if(!isNaN(weight) && weight > 0) {
                     // --- OPTIMIZATION LOGIC ---
-                    // Threshold to round up to X grams is (X - 0.0005)
                     const thresholdWeight = weight - 0.0005;
                     const rawPrice = thresholdWeight * marketPrice;
                     const optimizedBuy = Math.ceil(rawPrice * 100) / 100;
