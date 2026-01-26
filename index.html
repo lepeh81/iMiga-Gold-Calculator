@@ -61,6 +61,7 @@
             background: rgba(0,0,0,0.3);
             padding: 5px 10px;
             border-radius: 20px;
+            z-index: 10; /* Ensure it stays on top */
         }
 
         .mode-label {
@@ -74,7 +75,7 @@
             text-align: center;
             color: var(--gold-accent);
             margin-bottom: 0.5rem;
-            margin-top: 1rem;
+            margin-top: 2.5rem; /* Increased top margin to clear the toggle button */
             font-size: 1.5rem;
         }
 
@@ -580,7 +581,10 @@
                 padding: 1rem;
             }
             
-            h1 { font-size: 1.2rem; }
+            h1 { 
+                font-size: 1.2rem;
+                margin-top: 3.5rem; /* Increased specific mobile spacing */
+            }
             
             .table-container {
                 /* Allows horizontal scroll ONLY if absolutely necessary, but we try to fit */
