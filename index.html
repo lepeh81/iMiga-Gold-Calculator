@@ -525,6 +525,27 @@
             display: none;
         }
 
+        /* Disclaimer Animation */
+        .educational-disclaimer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #ff4444;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+            animation: blink-red 2s infinite ease-in-out;
+            border-top: 1px solid #444;
+            padding-top: 15px;
+        }
+
+        @keyframes blink-red {
+            0% { opacity: 1; color: #ff4444; }
+            50% { opacity: 0.5; color: #cc0000; }
+            100% { opacity: 1; color: #ff4444; }
+        }
+
         /* MOBILE SPECIFIC OVERRIDES */
         @media (max-width: 600px) {
             .calculator-card {
@@ -925,6 +946,11 @@
             </div>
         </div>
 
+        <div class="educational-disclaimer">
+            ⚠️ Disclaimer: This tool is intended for educational purposes only. <br>
+            It does not constitute financial advice. Please conduct due diligence before trading.
+        </div>
+
     </div>
 
     <script>
@@ -1092,8 +1118,11 @@
                     const xauPrice = data.items[0].xauPrice; // Price per Ounce
                     const gramPrice = xauPrice / 31.1035; // Convert to Gram
                     
-                    aiMarketInput.value = gramPrice.toFixed(3);
-                    updateAiTable(); 
+                    // Only update if user hasn't edited manually (simple check)
+                    if(document.activeElement !== aiMarketInput) {
+                        aiMarketInput.value = gramPrice.toFixed(3);
+                        updateAiTable(); 
+                    }
                 }
             } catch (err) {
                 console.log("Fetch failed, using simulation for demo");
@@ -1127,6 +1156,7 @@
                 
                 if(!isNaN(weight) && weight > 0) {
                     // --- OPTIMIZATION LOGIC ---
+                    // Threshold to round up to X grams is (X - 0.0005)
                     const thresholdWeight = weight - 0.0005;
                     const rawPrice = thresholdWeight * marketPrice;
                     const optimizedBuy = Math.ceil(rawPrice * 100) / 100;
