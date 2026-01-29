@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-V3PF0MMH74"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V3PF0MMH74"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-V3PF0MMH74');
-</script>
+      gtag('config', 'G-V3PF0MMH74');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iMiga Gold Calculator by Lepeh</title>
@@ -44,7 +45,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 10px;
+            padding: 10px; /* Reduced padding for mobile */
             box-sizing: border-box;
         }
 
@@ -191,6 +192,13 @@
 
         .insight-box strong {
             color: var(--gold-accent);
+        }
+
+        .disclaimer {
+            font-size: 0.8rem;
+            margin-top: 0.8rem;
+            font-style: italic;
+            opacity: 0.7;
         }
 
         /* Top Section for Market Price Input */
@@ -383,9 +391,9 @@
         .suggestion-text {
             color: #ffffff;
             font-size: 1rem;
-            font-weight: bold;
             display: block;
             margin-bottom: 0.5rem;
+            line-height: 1.5;
         }
         
         .suggestion-icon {
@@ -1188,8 +1196,11 @@
                 if (bestDealObj.marketPrice > 0) {
                     reasonText = `Spread: RM ${bestDealObj.spreadText}/g`;
                 }
+                
+                const purchaseCount = Math.ceil(1 / bestDealObj.weight);
 
-                suggestionText.innerText = `Belian ${bestDealObj.weight}g adalah lebih menguntungkan (${reasonText})`;
+                suggestionText.innerHTML = `Belian <strong>${bestDealObj.weight}g</strong> adalah lebih menguntungkan (${reasonText}).<br>
+                <span style="font-size: 0.9rem; color: #ddd;">Perlu <strong>${purchaseCount} kali</strong> pembelian untuk kumpul 1 gram.</span>`;
                 suggestionArea.style.display = 'block';
                 
                 if(bestDealObj.rowId) {
@@ -1318,7 +1329,9 @@
             
             if (bestRow) {
                 bestRow.classList.add('best-deal');
-                suggestionText.innerText = `Belian ${bestWeight}g adalah paling menguntungkan (Spread: RM ${bestSpreadText}/g)`;
+                const purchaseCount = Math.ceil(1 / bestWeight);
+                suggestionText.innerHTML = `Belian <strong>${bestWeight}g</strong> adalah paling menguntungkan (Spread: RM ${bestSpreadText}/g).<br>
+                <span style="font-size: 0.9rem; color: #ddd;">Perlu <strong>${purchaseCount} kali</strong> pembelian untuk kumpul 1 gram.</span>`;
                 suggestionArea.style.display = 'block';
             } else {
                 suggestionArea.style.display = 'none';
@@ -1538,4 +1551,3 @@
     </script>
 </body>
 </html>
-
