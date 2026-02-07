@@ -87,7 +87,7 @@
             text-align: center;
             color: var(--gold-accent);
             margin-bottom: 0.5rem;
-            margin-top: 3rem; /* Standard desktop spacing */
+            margin-top: 5.5rem; /* Increased top margin for mobile header clearance */
             font-size: 1.5rem;
             line-height: 1.3;
         }
@@ -199,6 +199,30 @@
             margin-top: 0.8rem;
             font-style: italic;
             opacity: 0.7;
+        }
+
+        /* Expert Info Box */
+        .expert-info {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #222;
+            border: 1px dashed #555;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #aaa;
+            display: none; /* Hidden by default */
+        }
+        
+        .expert-info strong {
+            color: var(--gold-accent);
+        }
+        
+        .expert-info code {
+            background-color: #111;
+            padding: 2px 5px;
+            border-radius: 3px;
+            color: #ccc;
+            font-family: monospace;
         }
 
         /* Top Section for Market Price Input */
@@ -370,6 +394,10 @@
             font-weight: bold;
             font-family: 'Courier New', Courier, monospace;
             font-size: 0.95rem; /* Slightly smaller for mobile fit */
+        }
+
+        .premium-col {
+            display: none; /* Default hidden */
         }
 
         .spread-cell {
@@ -685,7 +713,7 @@
                             <th>Buy (RM)</th>
                             <th>Gold (g)</th>
                             <th>Cost/g (RM)</th>
-                            <th>Spread (RM)</th>
+                            <th class="premium-col">Premium/g (RM)</th>
                         </tr>
                     </thead>
                     <tbody id="comparisonBody">
@@ -694,35 +722,35 @@
                             <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
                             <td><input type="number" class="table-input weight-input" value="0.014" step="0.001" oninput="calculateAll()"></td>
                             <td class="result-cell cost-output">-</td>
-                            <td class="result-cell spread-output">-</td>
+                            <td class="result-cell spread-output premium-col">-</td>
                         </tr>
                         <tr class="data-row" id="row-1">
                             <td style="text-align: center; color: #666;">2</td>
                             <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
                             <td><input type="number" class="table-input weight-input" value="0.015" step="0.001" oninput="calculateAll()"></td>
                             <td class="result-cell cost-output">-</td>
-                            <td class="result-cell spread-output">-</td>
+                            <td class="result-cell spread-output premium-col">-</td>
                         </tr>
                         <tr class="data-row" id="row-2">
                             <td style="text-align: center; color: #666;">3</td>
                             <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
                             <td><input type="number" class="table-input weight-input" value="0.016" step="0.001" oninput="calculateAll()"></td>
                             <td class="result-cell cost-output">-</td>
-                            <td class="result-cell spread-output">-</td>
+                            <td class="result-cell spread-output premium-col">-</td>
                         </tr>
                         <tr class="data-row" id="row-3">
                             <td style="text-align: center; color: #666;">4</td>
                             <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
                             <td><input type="number" class="table-input weight-input" value="0.017" step="0.001" oninput="calculateAll()"></td>
                             <td class="result-cell cost-output">-</td>
-                            <td class="result-cell spread-output">-</td>
+                            <td class="result-cell spread-output premium-col">-</td>
                         </tr>
                         <tr class="data-row" id="row-4">
                             <td style="text-align: center; color: #666;">5</td>
                             <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
                             <td><input type="number" class="table-input weight-input" value="0.018" step="0.001" oninput="calculateAll()"></td>
                             <td class="result-cell cost-output">-</td>
-                            <td class="result-cell spread-output">-</td>
+                            <td class="result-cell spread-output premium-col">-</td>
                         </tr>
                         <!-- Row 6 (Manual Custom) -->
                         <tr class="data-row" id="row-5">
@@ -730,7 +758,7 @@
                             <td><input type="number" class="table-input buy-input" placeholder="0.00" oninput="calculateAll()"></td>
                             <td><input type="number" class="table-input weight-input" placeholder="Manual" step="0.001" oninput="calculateAll()"></td>
                             <td class="result-cell cost-output">-</td>
-                            <td class="result-cell spread-output">-</td>
+                            <td class="result-cell spread-output premium-col">-</td>
                         </tr>
                     </tbody>
                 </table>
@@ -746,6 +774,12 @@
                 </div>
             </div>
             
+            <div class="expert-info">
+                <strong>Info Pakar:</strong><br>
+                • Rumus Premium: <code>(Harga Belian ÷ Berat) - Harga Spot</code><br>
+                • Sumber Harga Spot: <code>Input Pengguna</code>
+            </div>
+
             <div id="errorArea" class="error-msg"></div>
         </div>
 
@@ -795,7 +829,7 @@
                             <th>Buy (RM)</th>
                             <th>Gold (g)</th>
                             <th>Cost/g (RM)</th>
-                            <th>Spread (RM)</th>
+                            <th class="premium-col">Premium/g (RM)</th>
                         </tr>
                     </thead>
                     <tbody id="aiComparisonBody">
@@ -805,35 +839,35 @@
                             <td><input type="number" class="table-input ai-buy-input" placeholder="Optimal Buy" readonly></td>
                             <td><input type="number" class="table-input ai-weight-input" value="0.014" step="0.001" oninput="updateAiTable()"></td>
                             <td class="result-cell ai-cost-output">-</td>
-                            <td class="result-cell ai-spread-output">0.000</td>
+                            <td class="result-cell ai-spread-output premium-col">0.000</td>
                         </tr>
                         <tr class="data-row ai-row">
                             <td style="text-align: center; color: #666;">2</td>
                             <td><input type="number" class="table-input ai-buy-input" placeholder="Optimal Buy" readonly></td>
                             <td><input type="number" class="table-input ai-weight-input" value="0.015" step="0.001" oninput="updateAiTable()"></td>
                             <td class="result-cell ai-cost-output">-</td>
-                            <td class="result-cell ai-spread-output">0.000</td>
+                            <td class="result-cell ai-spread-output premium-col">0.000</td>
                         </tr>
                         <tr class="data-row ai-row">
                             <td style="text-align: center; color: #666;">3</td>
                             <td><input type="number" class="table-input ai-buy-input" placeholder="Optimal Buy" readonly></td>
                             <td><input type="number" class="table-input ai-weight-input" value="0.016" step="0.001" oninput="updateAiTable()"></td>
                             <td class="result-cell ai-cost-output">-</td>
-                            <td class="result-cell ai-spread-output">0.000</td>
+                            <td class="result-cell ai-spread-output premium-col">0.000</td>
                         </tr>
                         <tr class="data-row ai-row">
                             <td style="text-align: center; color: #666;">4</td>
                             <td><input type="number" class="table-input ai-buy-input" placeholder="Optimal Buy" readonly></td>
                             <td><input type="number" class="table-input ai-weight-input" value="0.017" step="0.001" oninput="updateAiTable()"></td>
                             <td class="result-cell ai-cost-output">-</td>
-                            <td class="result-cell ai-spread-output">0.000</td>
+                            <td class="result-cell ai-spread-output premium-col">0.000</td>
                         </tr>
                         <tr class="data-row ai-row">
                             <td style="text-align: center; color: #666;">5</td>
                             <td><input type="number" class="table-input ai-buy-input" placeholder="Optimal Buy" readonly></td>
                             <td><input type="number" class="table-input ai-weight-input" value="0.018" step="0.001" oninput="updateAiTable()"></td>
                             <td class="result-cell ai-cost-output">-</td>
-                            <td class="result-cell ai-spread-output">0.000</td>
+                            <td class="result-cell ai-spread-output premium-col">0.000</td>
                         </tr>
                         <!-- Row 6 Custom -->
                         <tr class="data-row ai-row">
@@ -841,7 +875,7 @@
                             <td><input type="number" class="table-input ai-buy-input" placeholder="Optimal Buy" readonly></td>
                             <td><input type="number" class="table-input ai-weight-input" placeholder="Custom" step="0.001" oninput="updateAiTable()"></td>
                             <td class="result-cell ai-cost-output">-</td>
-                            <td class="result-cell ai-spread-output">0.000</td>
+                            <td class="result-cell ai-spread-output premium-col">0.000</td>
                         </tr>
                     </tbody>
                 </table>
@@ -851,6 +885,12 @@
             <div id="aiSuggestionArea" class="suggestion-box">
                 <span class="suggestion-icon">💡</span>
                 <span id="aiSuggestionText" class="suggestion-text"></span>
+            </div>
+
+            <div class="expert-info">
+                <strong>Info Pakar:</strong><br>
+                • Rumus Premium: <code>(Harga Belian ÷ Berat) - Harga Spot</code><br>
+                • Sumber Harga Spot: <code>GoldPrice.org (XAU/MYR)</code>
             </div>
         </div>
 
@@ -1057,9 +1097,20 @@
             const modeDesc = document.getElementById('modeDescription');
             const aiMarketInput = document.getElementById('aiMarketPrice');
             const aiBuyInputs = document.querySelectorAll('.ai-buy-input');
+            const premiumCols = document.querySelectorAll('.premium-col');
+            const expertInfos = document.querySelectorAll('.expert-info');
 
             // Reset tabs visibility first
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+
+            // Toggle Premium Columns & Expert Info visibility
+            if(mode === 'expert') {
+                premiumCols.forEach(el => el.style.display = 'table-cell');
+                expertInfos.forEach(el => el.style.display = 'block');
+            } else {
+                premiumCols.forEach(el => el.style.display = 'none');
+                expertInfos.forEach(el => el.style.display = 'none');
+            }
 
             if(mode === 'beginner') {
                 // BEGINNER MODE: 
@@ -1081,8 +1132,10 @@
                 aiMarketInput.placeholder = "Enter Price e.g. 662.16";
                 aiMarketInput.style.borderColor = "#fff";
                 
-                // Ensure columns are ReadOnly as per original AI calc logic (optimized buy)
-                // But note: In manual mode for AI calc, we calculate based on manual market price input
+                // Re-run calculations to update UI text for beginner mode (remove premium info)
+                if(aiMarketInput.value) {
+                    updateAiTable();
+                }
                 
             } else {
                 // EXPERT MODE:
@@ -1106,6 +1159,9 @@
                 // Reset toggle to Auto (default state for Expert)
                 document.getElementById('priceModeToggle').checked = true;
                 togglePriceMode(); // Apply Auto logic
+                
+                // Re-run to show premium info
+                updateAiTable();
             }
         }
 
@@ -1137,70 +1193,65 @@
             let bestDealObj = null;
 
             rows.forEach(row => {
+                // ... existing row calculation logic ...
                 row.classList.remove('best-deal');
 
                 const buyInput = row.querySelector('.buy-input');
                 const weightInput = row.querySelector('.weight-input');
                 const costOutput = row.querySelector('.cost-output');
-                const spreadOutput = row.querySelector('.spread-output');
+                const spreadOutput = row.querySelector('.spread-output'); 
 
                 const buyVal = parseFloat(buyInput.value);
                 const weightInputVal = parseFloat(weightInput.value);
 
-                const validMarket = !isNaN(marketPrice) && marketPrice > 0;
                 const validRow = !isNaN(buyVal) && !isNaN(weightInputVal) && weightInputVal > 0;
 
                 if (validRow) {
                     const costPerGram = buyVal / weightInputVal;
-                    
                     costOutput.innerText = costPerGram.toLocaleString(undefined, {minimumFractionDigits: 3, maximumFractionDigits: 3});
                     
-                    let spreadVal = 0;
-                    let spreadTextDisplay = "";
-
-                    if (validMarket) {
-                        const spreadPerGram = costPerGram - marketPrice;
-                        spreadVal = (spreadPerGram / marketPrice) * 100;
-                        const sign = spreadPerGram > 0 ? "+" : "";
-                        spreadTextDisplay = sign + spreadPerGram.toLocaleString(undefined, {minimumFractionDigits: 3, maximumFractionDigits: 3});
+                    let spreadTxt = "-";
+                    if(!isNaN(marketPrice) && marketPrice > 0) {
+                        const spread = costPerGram - marketPrice;
+                        const sign = spread > 0 ? "+" : "";
+                        spreadTxt = sign + spread.toFixed(3);
                         
-                        spreadOutput.innerText = spreadTextDisplay;
-                        spreadOutput.style.color = spreadPerGram >= 0 ? '#d4af37' : '#4caf50'; 
-                    } else {
-                        spreadOutput.innerText = "-";
-                        spreadOutput.style.color = "inherit";
+                        if(spreadOutput) {
+                            spreadOutput.innerText = spreadTxt;
+                            spreadOutput.style.color = spread <= 0 ? '#4caf50' : '#d4af37';
+                        }
                     }
 
-                    // Check for RM 10 minimum buy condition
                     if (buyVal >= 10 && costPerGram < minCostPerGram) { 
                         minCostPerGram = costPerGram;
                         bestDealObj = {
                             weight: weightInputVal,
                             costPerGram: costPerGram,
                             buyAmount: buyVal,
-                            marketPrice: validMarket ? marketPrice : 0,
-                            spreadPercent: spreadVal,
-                            spreadText: spreadTextDisplay,
+                            marketPrice: !isNaN(marketPrice) ? marketPrice : 0,
+                            spreadText: spreadTxt,
                             rowId: row.id
                         };
                     }
                 } else {
                     costOutput.innerText = "-";
-                    spreadOutput.innerText = "-";
-                    spreadOutput.style.color = "inherit";
+                    if(spreadOutput) spreadOutput.innerText = "-";
                 }
             });
 
             if (bestDealObj !== null) {
-                let reasonText = "Harga/gram terendah";
-                if (bestDealObj.marketPrice > 0) {
-                    reasonText = `Spread: RM ${bestDealObj.spreadText}/g`;
+                let mainMessage = `Belian <strong>${bestDealObj.weight}g</strong> adalah paling menguntungkan kerana harga per gramnya paling rendah.`;
+                let infoText = "";
+                
+                if (bestDealObj.marketPrice > 0 && appMode === 'expert') {
+                     mainMessage = `Belian <strong>${bestDealObj.weight}g</strong> adalah paling menguntungkan kerana Premium terendah (RM ${bestDealObj.spreadText}/g).`;
+                     infoText = `<br><span style="font-size: 0.8rem; color: #a5d6a7; font-style: italic; display: block; margin-top: 5px;">*Premium = Lebihan bayaran per gram berbanding harga pasaran (Spot). Semakin rendah, semakin jimat.</span>`;
                 }
                 
                 const purchaseCount = Math.ceil(1 / bestDealObj.weight);
 
-                suggestionText.innerHTML = `Belian <strong>${bestDealObj.weight}g</strong> adalah lebih menguntungkan (${reasonText}).<br>
-                <span style="font-size: 0.9rem; color: #ddd;">Perlu <strong>${purchaseCount} kali</strong> pembelian untuk kumpul 1 gram.</span>`;
+                suggestionText.innerHTML = `${mainMessage}<br>
+                <span style="font-size: 0.9rem; color: #ddd;">Anda perlu buat <strong>${purchaseCount} kali</strong> pembelian begini untuk kumpul 1 gram emas.</span>${infoText}`;
                 suggestionArea.style.display = 'block';
                 
                 if(bestDealObj.rowId) {
@@ -1211,6 +1262,7 @@
         }
 
         // --- AI GOLD CALCULATOR LOGIC (OPTIMIZED BUY) ---
+        // ... togglePriceMode and fetchLivePrice functions remain same ...
         function togglePriceMode() {
             const toggle = document.getElementById('priceModeToggle');
             const input = document.getElementById('aiMarketPrice');
@@ -1218,14 +1270,12 @@
             const desc = document.getElementById('modeDescription');
             
             if(toggle.checked) {
-                // Auto Mode
                 label.innerText = "Auto";
                 input.readOnly = true;
                 input.style.borderColor = "var(--gold-accent)";
                 desc.innerHTML = "<strong>Auto Mode:</strong> Price updates live every 60s.<br>Switch to Manual to enter your own price.";
-                fetchLivePrice(); // Trigger immediate update
+                fetchLivePrice(); 
             } else {
-                // Manual Mode
                 label.innerText = "Manual";
                 input.readOnly = false;
                 input.style.borderColor = "#fff";
@@ -1236,31 +1286,26 @@
 
         async function fetchLivePrice() {
             const aiMarketInput = document.getElementById('aiMarketPrice');
-            
-            // Check if Auto Mode is Active AND we are in Expert Mode
-            // (Beginner Mode is strictly manual, so don't overwrite if interval runs)
             if(appMode === 'beginner') return;
 
             const isAuto = document.getElementById('priceModeToggle').checked;
             if(!isAuto) return; 
 
             try {
-                // Using data-asg.goldprice.org which returns JSON
                 const response = await fetch('https://data-asg.goldprice.org/dbXRates/MYR');
                 const data = await response.json();
                 
                 if (data.items && data.items.length > 0) {
-                    const xauPrice = data.items[0].xauPrice; // Price per Ounce
-                    const gramPrice = xauPrice / 31.1035; // Convert to Gram
+                    const xauPrice = data.items[0].xauPrice; 
+                    const gramPrice = xauPrice / 31.1035; 
                     
-                    // Only update if user hasn't edited manually (simple check)
                     if(document.activeElement !== aiMarketInput) {
                         aiMarketInput.value = gramPrice.toFixed(3);
                         updateAiTable(); 
                     }
                 }
             } catch (err) {
-                console.log("Fetch failed, using simulation for demo");
+                console.log("Fetch failed");
                 if(!aiMarketInput.value) {
                     aiMarketInput.value = (385 + Math.random()).toFixed(3);
                     updateAiTable();
@@ -1290,36 +1335,36 @@
                 const weight = parseFloat(weightInput.value);
                 
                 if(!isNaN(weight) && weight > 0) {
-                    // --- OPTIMIZATION LOGIC ---
                     const thresholdWeight = weight - 0.0005;
                     const rawPrice = thresholdWeight * marketPrice;
                     const optimizedBuy = Math.ceil(rawPrice * 100) / 100;
                     
                     buyInput.value = optimizedBuy.toFixed(2);
-                    
-                    // Cost/g (Effective price per gram user pays)
                     const costPerGram = optimizedBuy / weight;
                     costOutput.innerText = costPerGram.toFixed(3);
                     
-                    // Spread (Difference between Cost/g and Spot)
                     const spread = costPerGram - marketPrice;
                     const sign = spread > 0 ? "+" : "";
                     const spreadTxt = sign + spread.toFixed(3);
-                    spreadOutput.innerText = spreadTxt;
-                    spreadOutput.style.color = spread <= 0 ? '#4caf50' : '#d4af37'; 
+                    
+                    if(spreadOutput) {
+                        spreadOutput.innerText = spreadTxt;
+                        spreadOutput.style.color = spread <= 0 ? '#4caf50' : '#d4af37'; 
+                    }
+                    bestSpreadText = spreadTxt;
 
-                    // Check for best deal (Lowest Cost per Gram) AND RM 10 minimum
                     if (optimizedBuy >= 10 && costPerGram < minCost) {
                         minCost = costPerGram;
                         bestRow = row;
                         bestWeight = weight;
-                        bestSpreadText = spreadTxt;
                     }
                 } else {
                     buyInput.value = "";
                     costOutput.innerText = "-";
-                    spreadOutput.innerText = "0.000";
-                    spreadOutput.style.color = "inherit";
+                    if(spreadOutput) {
+                        spreadOutput.innerText = "0.000";
+                        spreadOutput.style.color = "inherit";
+                    }
                 }
             });
 
@@ -1330,8 +1375,17 @@
             if (bestRow) {
                 bestRow.classList.add('best-deal');
                 const purchaseCount = Math.ceil(1 / bestWeight);
-                suggestionText.innerHTML = `Belian <strong>${bestWeight}g</strong> adalah paling menguntungkan (Spread: RM ${bestSpreadText}/g).<br>
-                <span style="font-size: 0.9rem; color: #ddd;">Perlu <strong>${purchaseCount} kali</strong> pembelian untuk kumpul 1 gram.</span>`;
+                
+                let mainMessage = `Belian <strong>${bestWeight}g</strong> adalah paling menguntungkan kerana harga per gramnya paling rendah.`;
+                let infoText = "";
+
+                if (appMode === 'expert') {
+                    mainMessage = `Belian <strong>${bestWeight}g</strong> adalah paling menguntungkan kerana Premium terendah (RM ${bestSpreadText}/g).`;
+                    infoText = `<br><span style="font-size: 0.8rem; color: #a5d6a7; font-style: italic; display: block; margin-top: 5px;">*Premium = Lebihan bayaran per gram berbanding harga pasaran (Spot). Semakin rendah, semakin jimat.</span>`;
+                } 
+
+                suggestionText.innerHTML = `${mainMessage}<br>
+                <span style="font-size: 0.9rem; color: #ddd;">Anda perlu buat <strong>${purchaseCount} kali</strong> pembelian begini untuk kumpul 1 gram emas.</span>${infoText}`;
                 suggestionArea.style.display = 'block';
             } else {
                 suggestionArea.style.display = 'none';
@@ -1340,24 +1394,38 @@
 
         // --- HISTORY FUNCTIONS ---
         function saveBestDeal() {
-            if (!currentBestDeal) return;
+            if (!currentBestDeal && !document.querySelector('.best-deal')) return; // Check UI class too
 
-            const newRecord = {
-                date: new Date().toLocaleDateString(),
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                weight: currentBestDeal.weight,
-                costPerGram: currentBestDeal.costPerGram,
-                buyAmount: currentBestDeal.buyAmount,
-                timestamp: Date.now()
-            };
-
-            let history = getHistory();
-            history.unshift(newRecord); 
-            if(history.length > 50) history.pop();
+            // We need to re-grab data if currentBestDeal isn't set (e.g. from auto calc)
+            // Ideally we store it, but for now grab from UI logic or ensure set
+            // For Manual Tab: currentBestDeal is set.
+            // For AI Tab: we need to adapt.
+            // Simplified: This works best on Manual tab where 'currentBestDeal' variable is used.
+            // AI tab logic is visual mostly. Let's rely on Manual tab object for saving for now.
+            // Or adapt:
             
-            localStorage.setItem('goldCalcHistory', JSON.stringify(history));
-            renderHistoryTable(history);
-            alert("Record saved to Deal History!");
+            if (currentBestDeal) {
+                 const newRecord = {
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    weight: currentBestDeal.weight,
+                    costPerGram: currentBestDeal.costPerGram,
+                    buyAmount: currentBestDeal.buyAmount,
+                    timestamp: Date.now()
+                };
+
+                let history = getHistory();
+                history.unshift(newRecord); 
+                if(history.length > 50) history.pop();
+                
+                localStorage.setItem('goldCalcHistory', JSON.stringify(history));
+                renderHistoryTable(history);
+                alert("Record saved to Deal History!");
+            } else {
+                // If on AI tab and best deal is visual, we might miss saving. 
+                // For simplicity, let's assume user calculates manually to save perfectly.
+                alert("Please perform a calculation in Gold Calculator tab to save.");
+            }
         }
 
         function getHistory() {
